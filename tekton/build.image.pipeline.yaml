@@ -3,6 +3,16 @@ kind: Pipeline
 metadata:
   name: build-image-pipeline
 spec:
+  params:
+    - name: source-repo
+      type: string
+      description: Source code repository
+    - name: image-repo
+      type: string
+      description: Docker image repository
+    - name: app-name
+      type: string
+      description: Application name
   tasks:
     - name: fetch
       taskRef:
@@ -13,7 +23,20 @@ spec:
           workspace: rudy-demayo-pipeline-assignment
       params:
         - name: url
-          value: https://github.com/cloud-native-garage-method-cohort/rudy-demayo-buildah-assignment.git
+          # value: https://github.com/cloud-native-garage-method-cohort/rudy-demayo-buildah-assignment.git
+          value: "$(params.source-repo)"
+    - name: run-tests
+      params:
+        - name: ARGS
+          value:
+            - install-ci-test
+      runAfter:
+        - fetch
+      taskRef:
+        name: npm
+      workspaces:
+        - name: source
+          workspace: rudy-demayo-pipeline-assignment
     - name: build  
       taskRef:
         name: buildah
@@ -23,8 +46,43 @@ spec:
           workspace: rudy-demayo-pipeline-assignment
       params:
       - name: IMAGE
-        value: quay.io/rdemayo/buildah-image:0.1
+        # value: quay.io/rdemayo/buildah-image:0.1
+        value: "$(params.image-repo):$(tasks.fetch.results.commit)"
       runAfter:
       - fetch
+    - name: create-configuration
+      runAfter:
+        - build
+      taskRef:
+        name: kustomize
+      params:
+        - name: app-name
+          value: "$(params.app-name)"
+        - name: app-namespace
+          value: "$(context.pipelineRun.namespace)"
+        - name: source-repo
+          value: "$(params.source-repo)"
+        - name: commit
+          value: "$(tasks.clone-repository.results.commit)"
+        - name: image-repo
+          value: "$(params.image-repo)"
+        - name: runtime
+          value: "js"
+      workspaces:
+        - name: source
+          workspace: rudy-demayo-pipeline-assignment
+    - name: deploy
+      params:
+        - name: app-name
+          value: "$(params.app-name)"
+        - name: app-namespace
+          value: "$(context.pipelineRun.namespace)"
+      runAfter:
+        - create-configuration
+      taskRef:
+        name: deploy
+      workspaces:
+        - name: source
+          workspace: rudy-demayo-pipeline-assignment
   workspaces:
     - name: rudy-demayo-pipeline-assignment

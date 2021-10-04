@@ -1,0 +1,12 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: buildah-image
+spec:
+  tls:
+    termination: edge
+  to:
+    name: buildah-image
+    kind: Service
+    weight: 100
+  wildcardPolicy: None

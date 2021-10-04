@@ -3,9 +3,16 @@ kind: PipelineRun
 metadata:
   generateName: build-image-pipeline-
 spec:
-  serviceAccountName: build-bot
   pipelineRef:
     name: build-image-pipeline
+  params: 
+    - name: app-name
+      value: buildah-image
+    - name: source-repo
+      value: https://github.com/cloud-native-garage-method-cohort/rudy-demayo-buildah-assignment.git
+    - name: image-repo
+      value: quay.io/rdemayo/buildah-image:0.1
+  serviceAccountName: build-bot
   workspaces:
     - name: rudy-demayo-pipeline-assignment
       volumeClaimTemplate:
