@@ -1,0 +1,30 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: build-image-pipeline
+spec:
+  tasks:
+    - name: fetch
+      taskRef:
+        name: git-clone-v0-16-3
+        kind: ClusterTask
+      workspaces:
+        - name: output
+          workspace: rudy-demayo-pipeline-assignment
+      params:
+        - name: url
+          value: https://github.com/cloud-native-garage-method-cohort/rudy-demayo-buildah-assignment.git
+    - name: build  
+      taskRef:
+        name: buildah
+        kind: ClusterTask
+      workspaces:
+        - name: source
+          workspace: rudy-demayo-pipeline-assignment
+      params:
+      - name: IMAGE
+        value: quay.io/rdemayo/buildah-image:0.1
+      runAfter:
+      - fetch
+  workspaces:
+    - name: rudy-demayo-pipeline-assignment

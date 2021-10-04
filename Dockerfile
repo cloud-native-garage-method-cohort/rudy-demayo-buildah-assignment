@@ -1,0 +1,1 @@
+from quay.io/ibmgaragecloud/node:its-stretch

@@ -1,0 +1,17 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  generateName: build-image-pipeline-
+spec:
+  serviceAccountName: build-bot
+  pipelineRef:
+    name: build-image-pipeline
+  workspaces:
+    - name: rudy-demayo-pipeline-assignment
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi 
