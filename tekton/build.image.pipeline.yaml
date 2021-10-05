@@ -54,16 +54,14 @@ spec:
       runAfter:
         - build
       taskRef:
-        name: kustomize
+        name: create-configuration
       params:
         - name: app-name
           value: "$(params.app-name)"
-        - name: app-namespace
-          value: "$(context.pipelineRun.namespace)"
         - name: source-repo
           value: "$(params.source-repo)"
         - name: commit
-          value: "$(tasks.clone-repository.results.commit)"
+          value: "$(tasks.fetch.results.commit)"
         - name: image-repo
           value: "$(params.image-repo)"
         - name: runtime
@@ -73,10 +71,10 @@ spec:
           workspace: rudy-demayo-pipeline-assignment
     - name: deploy
       params:
-        - name: app-name
-          value: "$(params.app-name)"
         - name: app-namespace
           value: "$(context.pipelineRun.namespace)"
+        - name: manifest
+          value: "$(tasks.create-configuration.results.manifest)"
       runAfter:
         - create-configuration
       taskRef:

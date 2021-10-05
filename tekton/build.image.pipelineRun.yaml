@@ -11,7 +11,7 @@ spec:
     - name: source-repo
       value: https://github.com/cloud-native-garage-method-cohort/rudy-demayo-buildah-assignment.git
     - name: image-repo
-      value: quay.io/rdemayo/buildah-image:0.1
+      value: quay.io/rdemayo/buildah-image
   serviceAccountName: build-bot
   workspaces:
     - name: rudy-demayo-pipeline-assignment

@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: buildah-image
+  name: buildahimage
 spec:
   replicas: 1
   selector:
@@ -19,7 +19,7 @@ spec:
       dnsPolicy: ClusterFirst
       schedulerName: default-scheduler
       containers:
-      - name: buildah-image
+      - name: buildahimage
         image: quay.io/rdemayo/buildah-image:0.1
         ports:
         - name: http
