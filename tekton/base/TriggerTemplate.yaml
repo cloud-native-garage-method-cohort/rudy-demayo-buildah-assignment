@@ -1,0 +1,31 @@
+---
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerTemplate
+metadata:
+  name: vcs-trigger
+spec:
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1beta1
+      kind: PipelineRun
+      metadata:
+        generateName: build-image-pipeline-
+      spec:
+        pipelineRef:
+          name: build-image-pipeline
+        serviceAccountName: build-bot
+        params:
+          - name: app-name
+            value: buildah-image
+          - name: source-repo
+            value: https://github.com/cloud-native-garage-method-cohort/rudy-demayo-buildah-assignment.git
+          - name: image-repo
+            value: quay.io/rdemayo/buildah-image
+        workspaces:
+          - name: rudy-demayo-pipeline-assignment
+            volumeClaimTemplate:
+              spec:
+                accessModes:
+                  - ReadWriteOnce
+                resources:
+                  requests:
+                    storage: 1Gi
